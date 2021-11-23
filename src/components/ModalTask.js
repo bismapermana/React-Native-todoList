@@ -32,8 +32,6 @@ const ModalTask = ({ showModal, setShowModal, getData }) => {
     }
   };
 
-  console.log(form);
-
   return (
     <>
       <Modal isOpen={showModal} onClose={() => setShowModal(false)} size="xl">

@@ -1,9 +1,9 @@
 import React from "react";
 import { Box } from "native-base";
-import CardTask from "../components/CardTask";
 import { StyleSheet, Text } from "react-native";
+import CardDoneTask from "../components/CardDoneTask";
 
-const Todo = () => {
+const DoneTodo = () => {
   return (
     <Box bg="#e5e5e5">
       <Box
@@ -23,7 +23,7 @@ const Todo = () => {
         </Text>
       </Box>
       <Box height="80%">
-        <CardTask />
+        <CardDoneTask />
       </Box>
     </Box>
   );
@@ -42,4 +42,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Todo;
+export default DoneTodo;

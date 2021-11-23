@@ -4,14 +4,22 @@ import { StyleSheet, FlatList, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import ModalTask from "./ModalTask";
+import ModalEditTask from "./ModalEditTask";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const CardTask = () => {
   const [data, setData] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [showModalEdit, setShowModalEdit] = useState(false);
+  const [todoData, setTodoData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleShow = () => {
     setShowModal(true);
+  };
+  const handleShowEdit = (item) => {
+    setTodoData(item);
+    setShowModalEdit(true);
   };
 
   const getData = async () => {
@@ -28,15 +36,21 @@ const CardTask = () => {
     }
   };
 
-  const deleteData = async (id) => {
+  const updateData = async (id) => {
     try {
-      await axios.delete(
-        "https://619a108f9022ea0017a7b010.mockapi.io/todos/" + id
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+        },
+      };
+      await axios.put(
+        "https://619a108f9022ea0017a7b010.mockapi.io/todos/" + id,
+        { isDone: true },
+        config
       );
       getData();
     } catch (error) {
       console.log(error);
-      setIsLoading(false);
     }
   };
 
@@ -45,44 +59,54 @@ const CardTask = () => {
   }, []);
 
   const renderItem = ({ item }) => {
-    return (
-      <Box style={styles.containerCard} key={item.id} borderRadius="md">
-        <HStack height="100" width="100%">
-          <Box borderRadius="10" bg="white" width="25%" shadow="7">
-            <Button
-              borderTopRadius="10"
-              borderBottomRadius="0"
-              height="50%"
-              onPress={() => deleteData(item.id)}
+    if (item.isDone == false) {
+      return (
+        <Box style={styles.containerCard} key={item.id} borderRadius="md">
+          <HStack height="100" width="100%">
+            <Box borderRadius="10" bg="white" width="25%" shadow="7">
+              <Button
+                borderTopRadius="10"
+                borderBottomRadius="0"
+                height="50%"
+                onPress={() => updateData(item.id)}
+              >
+                <MaterialCommunityIcons
+                  name="checkbox-multiple-marked-circle"
+                  size={30}
+                  color="white"
+                />
+              </Button>
+              <Button
+                borderBottomRadius="10"
+                borderTopRadius="0"
+                borderTopWidth="2"
+                borderTopColor="white"
+                bg="orange.400"
+                height="50%"
+                onPress={() => handleShowEdit(item)}
+              >
+                <MaterialCommunityIcons
+                  name="file-document-edit"
+                  size={30}
+                  color="white"
+                />
+              </Button>
+            </Box>
+            <Box
+              bg="white"
+              marginLeft="3%"
+              width="72%"
+              borderRadius="10"
+              padding="5"
+              shadow="3"
             >
-              <Text style={styles.textDone}>Done</Text>
-            </Button>
-            <Button
-              borderBottomRadius="10"
-              borderTopRadius="0"
-              borderTopWidth="2"
-              borderTopColor="white"
-              bg="orange.400"
-              height="50%"
-              onPress={() => deleteData(item.id)}
-            >
-              <Text style={styles.textButton}>Delete</Text>
-            </Button>
-          </Box>
-          <Box
-            bg="white"
-            marginLeft="3%"
-            width="72%"
-            borderRadius="10"
-            padding="5"
-            shadow="3"
-          >
-            <Text style={styles.textTitle}>{item.title}</Text>
-            <Text>{item.description}</Text>
-          </Box>
-        </HStack>
-      </Box>
-    );
+              <Text style={styles.textTitle}>{item.title}</Text>
+              <Text>{item.description}</Text>
+            </Box>
+          </HStack>
+        </Box>
+      );
+    }
   };
 
   return (
@@ -116,6 +140,12 @@ const CardTask = () => {
         showModal={showModal}
         setShowModal={setShowModal}
         getData={getData}
+      />
+      <ModalEditTask
+        showModalEdit={showModalEdit}
+        setShowModalEdit={setShowModalEdit}
+        getData={getData}
+        todoData={todoData}
       />
     </Box>
   );
